@@ -1,6 +1,8 @@
 from IPython.core.display import display, HTML, clear_output
 from ipywidgets import widgets
-from pandas.api.extensions import register_dataframe_accessor
+from pandas.api.extensions import (
+    register_dataframe_accessor, register_series_accessor
+)
 import math
 
 __version__ = '0.1.0'
@@ -113,9 +115,18 @@ class Paginator:
 
 
 @register_dataframe_accessor("paginate")
-class PaginateAccessor:
+class PaginateDataFrameAccessor:
     def __init__(self, pandas_obj):
         self._obj = pandas_obj
 
     def __call__(self):
         return Paginator(self._obj).show()
+
+
+@register_series_accessor("paginate")
+class PaginateSeriesAccessor:
+    def __init__(self, pandas_obj):
+        self._obj = pandas_obj
+
+    def __call__(self):
+        return Paginator(self._obj.to_frame()).show()
